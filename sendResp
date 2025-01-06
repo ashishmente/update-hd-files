@@ -1,0 +1,225 @@
+import org.apache.camel.Exchange;
+import org.json.simple.parser.JSONParser;
+import org.json.JSONObject;
+import org.json.JSONArray;
+import org.apache.log4j.Logger
+ 
+import java.util.*;
+import java.io.*;
+import org.json.JSONException;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+
+import java.net.MalformedURLException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+ 
+public class sample_json_response {
+	
+ 
+	private static final Logger log = Logger.getLogger("groovy");
+	public static void AccountBlock(String entityID, String EmailFlag) throws IOException {
+		// Database connection parameters
+		String dbUrl = "jdbc:oracle:thin:@//sfmserver.demo.sas.com:1521/SOR.DEMO.SAS.COM"; // Replace with your Oracle DB details
+		String dbUser = "fcmcore"; // Replace with your database username
+		String dbPassword = "Orion123"; // Replace with your database password
+
+		// Validate entityID
+		if (entityID == null || entityID.isEmpty()) {
+			throw new IllegalArgumentException("Entity ID cannot be null or empty");
+		}
+
+		String updateQuery = "UPDATE FCM_ACCOUNT SET ACCOUNT_STATUS = 'Inactive' WHERE ACCOUNT_IBAN_NUM = '" + entityID + "'";
+		String updateEmailSentQuery = "UPDATE FCM_ACCOUNT SET EMAIL_SEND = 'true' WHERE ACCOUNT_IBAN_NUM = '" + entityID + "'";
+		
+
+		Connection connection = null;
+		Statement statement = null;
+
+		try {
+			// Establish database connection
+			connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+
+			// Create statement
+			statement = connection.createStatement();
+
+			// Execute the query
+			int rowsUpdated = statement.executeUpdate(updateQuery);
+			if(EmailFlag.equals("1"))
+			{
+			statement.executeUpdate(updateEmailSentQuery);
+			}
+
+			// Check if any row was updated
+			if (rowsUpdated > 0) {
+				System.out.println("Successfully updated ACCOUNT_STATUS to Inactive for ACCOUNT_IBAN_NUM: " + entityID);
+			} else {
+				throw new RuntimeException("No account found for ACCOUNT_IBAN_NUM: " + entityID);
+			}
+		} catch (SQLException e) {
+			throw new IOException("Database error occurred", e);
+		} catch (Exception e) {
+			throw new IOException("An error occurred while processing the AccountBlock method", e);
+		} finally {
+			// Close resources in the finally block
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					System.err.println("Failed to close statement: " + e.getMessage());
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					System.err.println("Failed to close connection: " + e.getMessage());
+				}
+			}
+		}
+	}
+
+
+	
+		public static void CardBlock(String entityID,String EmailFlag) throws IOException {
+		// Database connection parameters
+		String dbUrl = "jdbc:oracle:thin:@//sfmserver.demo.sas.com:1521/SOR.DEMO.SAS.COM"; // Replace with your Oracle DB details
+		String dbUser = "fcmcore"; // Replace with your database username
+		String dbPassword = "Orion123"; // Replace with your database password
+
+		// Validate entityID
+		if (entityID == null || entityID.isEmpty()) {
+			throw new IllegalArgumentException("Entity ID cannot be null or empty");
+		}
+
+		String updateQuery = "UPDATE FCM_CARD SET ONLINE_AUTHORIZATION_CARD_STATUS = 'INACTIVE' WHERE CARD_NUM = '" + entityID + "'";
+		String updateQueryEmail = "UPDATE FCM_CARD SET EMAIL_SEND = 'TRUE' WHERE CARD_NUM = '" + entityID + "'";
+
+		Connection connection = null;
+		Statement statement = null;
+
+		try {
+			// Establish database connection
+			connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+
+			// Create statement
+			statement = connection.createStatement();
+
+			// Execute the query
+			int rowsUpdated = statement.executeUpdate(updateQuery);
+			
+			if(EmailFlag.equals("1"))
+			{
+			statement.executeUpdate(updateQueryEmail);
+			}
+			
+			// Check if any row was updated
+			if (rowsUpdated > 0) {
+				System.out.println("Successfully updated ONLINE_AUTHORIZATION_CARD_STATUS to Inactive for CARD_NUM: " + entityID);
+			} else {
+				throw new RuntimeException("No card found for CARD_NUM: " + entityID);
+			}
+		} catch (SQLException e) {
+			throw new IOException("Database error occurred", e);
+		} catch (Exception e) {
+			throw new IOException("An error occurred while processing the CardBlock method", e);
+		} finally {
+			// Close resources in the finally block
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					System.err.println("Failed to close statement: " + e.getMessage());
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					System.err.println("Failed to close connection: " + e.getMessage());
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+		public String process(Exchange exchange) {
+        String textJson = exchange.getIn().getBody(String.class);
+		// System.out.println("-----Sample JSON Response Start-----");
+		// System.out.println(textJson);
+		String BlockingType="";
+		String odeDecision="";
+		String EntityID="";
+		String EmailFlag="";
+		String CustomerId="";
+		String Action="";
+		String EFMSChannelReferenceNumber="";
+		JSONParser parser = new JSONParser();
+        try {
+            if (textJson != null && !textJson.isEmpty()) {
+                JSONObject jsonObject = (JSONObject) parser.parse(textJson);
+			odeDecision = (String) jsonObject.optString("rur_8byte_string_001") != null ? (String) jsonObject.optString("rur_8byte_string_001"):"";
+			
+			BlockingType = (String) jsonObject.optString("rur_8byte_string_002") != null ? (String) jsonObject.optString("rur_8byte_string_002"):"";
+			EntityID = (String) jsonObject.optString("rur_30byte_string_001")!= null ? (String) jsonObject.optString("rur_30byte_string_001"):"";
+			EmailFlag = (String) jsonObject.optString("rur_ind_001")!= null ? (String) jsonObject.optString("rur_ind_001"):"";
+			CustomerId = (String) jsonObject.optString("rur_30byte_string_002") != null ? (String) jsonObject.optString("rur_30byte_string_002"):"";
+			EFMSChannelReferenceNumber = (String) jsonObject.optString("rur_30byte_string_003")!= null ? (String) jsonObject.optString("rur_30byte_string_003"):"";
+			 if(odeDecision==null || odeDecision==""){
+				 odeDecision="ACCEPT";
+			 }
+				
+				if(BlockingType.equals("C_BLOCK"))  // Block account
+				{
+					sample_json_response.CardBlock(EntityID,EmailFlag);
+					if(EmailFlag.equals("1")){
+						Action="Card has been blocked and email successfully send";
+					}
+					else{
+						Action="Card has been blocked";
+					}
+				}
+				
+				if(BlockingType.equals("A_BLOCK"))  // Block account
+				{
+					sample_json_response.AccountBlock(EntityID,EmailFlag);
+					if(EmailFlag.equals("1")){
+						Action="Account has been blocked and email successfully send";
+					}
+					else{
+						Action="Account has been blocked";
+					}
+				}
+				
+
+				JSONObject resultJson = new JSONObject();
+				resultJson.put("EFMSResponse", odeDecision);
+				resultJson.put("EFMSChannelReferenceNumber", EFMSChannelReferenceNumber);
+				resultJson.put("Customer Id", CustomerId);
+				if(BlockingType.equals("A_BLOCK") || BlockingType.equals("C_BLOCK")){
+					resultJson.put("Action", Action);
+				}
+ 
+				// Convert the result to a string and return it
+				String resultString = resultJson.toString();
+				//System.out.println(resultString);
+				log.info("Result string: " + resultString);
+				exchange.getIn().setBody(resultString);
+				return resultString;
+				
+			}
+            else {
+				log.info("JSON data is empty or null.--------------------");
+				return null;
+            }
+        } catch (Exception e) {
+			log.error("Error processing JSON response: " + e.getMessage(), e);
+            e.printStackTrace();
+        }
+    }
+}

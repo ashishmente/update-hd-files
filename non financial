@@ -1,0 +1,14 @@
+{
+    "Data": {
+        "EFMSChannelReferenceNumber": "T1A0022",
+        "ChannelCode": "MB",
+        "TransferType": "FT_DEBIT",
+        "ActionDateTime": "2024-12-20T10:57:36.650Z",
+        "CustomerId": "C0119377077771",
+        "AccountId": "1907770772714",
+        "BeneficiaryAccountId": "1500432556",
+        "BeneficiaryName": "MegaMart Groceries",
+		"OnlineBankingUserID": "",
+        "CountryISO2":"IN"
+    }
+}

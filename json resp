@@ -62,3 +62,10 @@ System.out.println(jsonResponse);
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("gender", jsonObject.getString("gender"));
         dataMap.put("firstName", jsonObject.getString("firstName"));
+
+
+
+
+ JSONObject json = new JSONObject()
+            .put("gender", "Male")
+            .put("firstName", "John");

@@ -1,0 +1,21 @@
+<detailGroup name="contact">
+  <detail name="fullName">DUBONE, JACQUELINE FRANCIS</detail>
+  <detail name="addressLine1">132 SHUNPIKE RD</detail>
+  <detail name="addressLine2"/>
+  <detail name="addressLine3"/>
+  <detail name="addressLine4"/>
+  <detail name="city">KELLOGG</detail>
+  <detail name="stateProvinceName">AZ</detail>
+  <detail name="postalCode">85001</detail>
+  <detail name="country"/>
+  <detail name="email">BLC51TXQNORTHERFCU.NET</detail>
+  <detail name="gender"/>
+  <detail name="homePhone1"/>
+  <detail name="homePhone2"/>
+  <detail name="languageCode">EN</detail>
+  <detail name="mobilePhone1">1-602-555-2211</detail>
+  <detail name="mobilePhone2"/>
+  <detail name="nationality"/>
+  <detail name="workPhone1">1-520-555-6997</detail>
+  <detail name="workPhone2">1-520-555-6959</detail>
+</detailGroup>

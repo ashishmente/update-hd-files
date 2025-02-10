@@ -48,3 +48,17 @@ String jsonResponse = "{"
         + "}";
 
 System.out.println(jsonResponse);
+
+
+ String jsonString = "{"
+                + "\"gender\": \"Male\","
+                + "\"firstName\": \"John\""
+                + "}";
+
+        // Step 2: Parse JSON using JSONObject
+        JSONObject jsonObject = new JSONObject(jsonString);
+
+        // Step 3: Extract fields and store in Map
+        Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("gender", jsonObject.getString("gender"));
+        dataMap.put("firstName", jsonObject.getString("firstName"));
